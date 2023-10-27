@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <title>Streetlifting Weight Plate Calculator</title>
+    <script src="script.js"></script>
+    <link rel="prefetch" href="highs.js">
+    <link rel="prefetch" href="highs.wasm">
+    <link rel="prefetch" href="worker.js">
+    <style>
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+
+        input[type='number']::-webkit-inner-spin-button,
+        input[type='number']::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        .custom-number-input input:focus {
+            outline: none !important;
+        }
+
+        .custom-number-input button:focus {
+            outline: none !important;
+        }
+
+        .custom-number-input {
+            margin: 0.5rem;
+        }
+
+        .plate-25 {
+            height: 200px;
+            width: 12px;
+            background: rgb(219,34,57);
+            background: -moz-linear-gradient(0deg, rgba(219,34,57,1) 0%, rgba(235,168,180,1) 50%, rgba(219,34,57,1) 100%);
+            background: -webkit-linear-gradient(0deg, rgba(219,34,57,1) 0%, rgba(235,168,180,1) 50%, rgba(219,34,57,1) 100%);
+            background: linear-gradient(0deg, rgba(219,34,57,1) 0%, rgba(235,168,180,1) 50%, rgba(219,34,57,1) 100%);
+            filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#db2239",endColorstr="#db2239",GradientType=1);
+        }
+
+        .plate-20 {
+            height: 200px;
+            width: 10px;
+            background: rgb(36,118,207);
+            background: -moz-linear-gradient(0deg, rgba(36,118,207,1) 0%, rgba(148,182,221,1) 50%, rgba(36,118,207,1) 100%);
+            background: -webkit-linear-gradient(0deg, rgba(36,118,207,1) 0%, rgba(148,182,221,1) 50%, rgba(36,118,207,1) 100%);
+            background: linear-gradient(0deg, rgba(36,118,207,1) 0%, rgba(148,182,221,1) 50%, rgba(36,118,207,1) 100%);
+            filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#2476cf",endColorstr="#2476cf",GradientType=1);
+        }
+
+        .plate-15 {
+            height: 178px;
+            width: 9px;
+            background: rgb(237,207,47);
+            background: -moz-linear-gradient(0deg, rgba(237,207,47,1) 0%, rgba(237,225,151,1) 50%, rgba(237,207,47,1) 100%);
+            background: -webkit-linear-gradient(0deg, rgba(237,207,47,1) 0%, rgba(237,225,151,1) 50%, rgba(237,207,47,1) 100%);
+            background: linear-gradient(0deg, rgba(237,207,47,1) 0%, rgba(237,225,151,1) 50%, rgba(237,207,47,1) 100%);
+            filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#edcf2f",endColorstr="#edcf2f",GradientType=1);
+        }
+
+        .plate-10 {
+            height: 145px;
+            width: 9px;
+            background: rgb(69,170,55);
+            background: -moz-linear-gradient(0deg, rgba(69,170,55,1) 0%, rgba(170,215,181,1) 50%, rgba(69,170,55,1) 100%);
+            background: -webkit-linear-gradient(0deg, rgba(69,170,55,1) 0%, rgba(170,215,181,1) 50%, rgba(69,170,55,1) 100%);
+            background: linear-gradient(0deg, rgba(69,170,55,1) 0%, rgba(170,215,181,1) 50%, rgba(69,170,55,1) 100%);
+            filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#45aa37",endColorstr="#45aa37",GradientType=1);
+        }
+
+        .plate-5 {
+            height: 102px;
+            width: 9px;
+            background: rgb(201,209,213);
+            background: -moz-linear-gradient(0deg, rgba(201,209,213,1) 0%, rgba(242,249,252,1) 50%, rgba(201,209,213,1) 100%);
+            background: -webkit-linear-gradient(0deg, rgba(201,209,213,1) 0%, rgba(242,249,252,1) 50%, rgba(201,209,213,1) 100%);
+            background: linear-gradient(0deg, rgba(201,209,213,1) 0%, rgba(242,249,252,1) 50%, rgba(201,209,213,1) 100%);
+            filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#c9d1d5",endColorstr="#c9d1d5",GradientType=1);
+        }
+
+        .plate-2-5 {
+            height: 85px;
+            width: 7px;
+            background: rgb(17,25,29);
+            background: -moz-linear-gradient(0deg, rgba(17,25,29,1) 0%, rgba(138,150,153,1) 50%, rgba(17,25,29,1) 100%);
+            background: -webkit-linear-gradient(0deg, rgba(17,25,29,1) 0%, rgba(138,150,153,1) 50%, rgba(17,25,29,1) 100%);
+            background: linear-gradient(0deg, rgba(17,25,29,1) 0%, rgba(138,150,153,1) 50%, rgba(17,25,29,1) 100%);
+            filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#11191d",endColorstr="#11191d",GradientType=1);
+        }
+
+        .plate-1-25 {
+            height: 72px;
+            width: 6px;
+            background: rgb(121,144,157);
+            background: -moz-linear-gradient(0deg, rgba(121,144,157,1) 0%, rgba(248,254,255,1) 50%, rgba(121,144,157,1) 100%);
+            background: -webkit-linear-gradient(0deg, rgba(121,144,157,1) 0%, rgba(248,254,255,1) 50%, rgba(121,144,157,1) 100%);
+            background: linear-gradient(0deg, rgba(121,144,157,1) 0%, rgba(248,254,255,1) 50%, rgba(121,144,157,1) 100%);
+            filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#79909d",endColorstr="#79909d",GradientType=1);
+        }
+
+        .plate-0-5 {
+            height: 60px;
+            width: 4px;
+            background: rgb(121,144,157);
+            background: -moz-linear-gradient(0deg, rgba(121,144,157,1) 0%, rgba(248,254,255,1) 50%, rgba(121,144,157,1) 100%);
+            background: -webkit-linear-gradient(0deg, rgba(121,144,157,1) 0%, rgba(248,254,255,1) 50%, rgba(121,144,157,1) 100%);
+            background: linear-gradient(0deg, rgba(121,144,157,1) 0%, rgba(248,254,255,1) 50%, rgba(121,144,157,1) 100%);
+            filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#79909d",endColorstr="#79909d",GradientType=1);
+        }
+
+        .plate-0-25 {
+            height: 50px;
+            width: 3px;
+            background: rgb(121,144,157);
+            background: -moz-linear-gradient(0deg, rgba(121,144,157,1) 0%, rgba(248,254,255,1) 50%, rgba(121,144,157,1) 100%);
+            background: -webkit-linear-gradient(0deg, rgba(121,144,157,1) 0%, rgba(248,254,255,1) 50%, rgba(121,144,157,1) 100%);
+            background: linear-gradient(0deg, rgba(121,144,157,1) 0%, rgba(248,254,255,1) 50%, rgba(121,144,157,1) 100%);
+            filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#79909d",endColorstr="#79909d",GradientType=1);
+        }
+
+        .plate {
+            box-shadow: 5px 5px 30px 4px rgba(0,0,0,0.25);
+        }
+
+        .lds-ellipsis {
+            display: inline-block;
+            position: relative;
+            width: 80px;
+            height: 80px;
+        }
+        .lds-ellipsis div {
+            position: absolute;
+            top: 33px;
+            width: 13px;
+            height: 13px;
+            border-radius: 50%;
+            background: #fff;
+            animation-timing-function: cubic-bezier(0, 1, 1, 0);
+        }
+        .lds-ellipsis div:nth-child(1) {
+            left: 8px;
+            animation: lds-ellipsis1 0.6s infinite;
+        }
+        .lds-ellipsis div:nth-child(2) {
+            left: 8px;
+            animation: lds-ellipsis2 0.6s infinite;
+        }
+        .lds-ellipsis div:nth-child(3) {
+            left: 32px;
+            animation: lds-ellipsis2 0.6s infinite;
+        }
+        .lds-ellipsis div:nth-child(4) {
+            left: 56px;
+            animation: lds-ellipsis3 0.6s infinite;
+        }
+        @keyframes lds-ellipsis1 {
+            0% {
+                transform: scale(0);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+        @keyframes lds-ellipsis3 {
+            0% {
+                transform: scale(1);
+            }
+            100% {
+                transform: scale(0);
+            }
+        }
+        @keyframes lds-ellipsis2 {
+            0% {
+                transform: translate(0, 0);
+            }
+            100% {
+                transform: translate(24px, 0);
+            }
+        }
+    </style>
+</head>
+<body class="w-11/12 md:w-4/5  m-auto bg-black">
+<h1 class="text-3xl font-semibold text-center m-5 text-white">
+    Streetlifting Weight Plate Calculator
+</h1>
+<p class="text-center text-gray-300">
+    Are you tired of struggling to figure out the perfect combination of weight plates to load onto your barbell or belt for your Streetlifting workouts?
+    The Streetlifting Weight Plate Calculator is a tool takes the guesswork out of the equation and ensures you have the optimal plates for your desired target weight.
+</p>
+
+<h2 class="text-2xl font-semibold text-center m-5 text-white">Features</h2>
+
+<div class="grid grid-cols-1 md:grid-cols-3 mb-5">
+    <div class="bg-gray-900 p-2 mx-6 my-2">
+        <h3 class="text-lg font-semibold text-center m-2 text-white"><i class='bx bx-library' ></i> Plate Availability</h3>
+        <p class="text-center text-gray-200 text-sm">Our calculator will be customized to align with your available plates, thus optimizing your utilization of the gym's equipment resources.</p>
+    </div>
+    <div class="bg-gray-900 p-2 mx-6 my-2">
+        <h3 class="text-lg font-semibold text-center m-2 text-white"><i class='bx bx-abacus'></i> Balance & Symmetry</h3>
+        <p class="text-center text-gray-200 text-sm">Our calculator not only selects the most appropriate weight plates but also ensures their precise placement to maintain an optimal center of gravity.</p>
+    </div>
+    <div class="bg-gray-900 p-2 mx-6 my-2">
+        <h3 class="text-lg font-semibold text-center m-2 text-white"><i class='bx bx-collapse' ></i> Optimal Plate Usage</h3>
+        <p class="text-center text-gray-200 text-sm">The calculator is designed to minimize the number of plates required, thus preventing superfluous weight on your belt.</p>
+    </div>
+
+</div>
+
+<hr class="opacity-50">
+<div class="w-fit my-5 m-auto text-center"><p class="text-gray-300">Select the available weight plates...</p></div>
+
+<div class="flex flex-wrap justify-evenly">
+    <div class="custom-number-input  w-32 text-center border border-gray-800 rounded">
+        <label class="w-full text-red-400 text-xl font-semibold m-auto" for="25kg">25 kg
+        </label>
+        <div class="flex flex-row h-10 w-full rounded-lg relative bg-transparent mt-1">
+            <button data-action="decrement"
+                    class=" bg-gray-800 text-gray-100 hover:text-gray-200 hover:bg-gray-900 h-full w-20 rounded-l cursor-pointer outline-none">
+                <span class="m-auto text-2xl font-thin">−</span>
+            </button>
+            <input id="25kg" type="number"
+                   class="outline-none focus:outline-none text-center w-full bg-gray-800 font-semibold text-md hover:text-white focus:text-white md:text-basecursor-default flex items-center text-gray-300  outline-none"
+                   name="custom-input-number" value="0" min="0" max="999" oninput="this.value = Math.trunc(Math.min(Math.max(this.value, 0), 999)); localStorage.setItem(this.id, this.value)"></input>
+            <button data-action="increment"
+                    class="bg-gray-800 text-gray-100 hover:text-gray-200 hover:bg-gray-900 h-full w-20 rounded-r cursor-pointer">
+                <span class="m-auto text-2xl font-thin">+</span>
+            </button>
+        </div>
+    </div>
+
+    <div class="custom-number-input  w-32 text-center border border-gray-800 rounded">
+        <label class="w-full text-blue-400 text-xl font-semibold m-auto" for="20kg">20 kg
+        </label>
+        <div class="flex flex-row h-10 w-full rounded-lg relative bg-transparent mt-1">
+            <button data-action="decrement"
+                    class=" bg-gray-800 text-gray-100 hover:text-gray-200 hover:bg-gray-900 h-full w-20 rounded-l cursor-pointer outline-none">
+                <span class="m-auto text-2xl font-thin">−</span>
+            </button>
+            <input id="20kg" type="number"
+                   class="outline-none focus:outline-none text-center w-full bg-gray-800 font-semibold text-md hover:text-white focus:text-white md:text-basecursor-default flex items-center text-gray-300  outline-none"
+                   name="custom-input-number" value="0" min="0" max="999"  oninput="this.value = Math.trunc(Math.min(Math.max(this.value, 0), 999)); localStorage.setItem(this.id, this.value)"></input>
+            <button data-action="increment"
+                    class="bg-gray-800 text-gray-100 hover:text-gray-200 hover:bg-gray-900 h-full w-20 rounded-r cursor-pointer">
+                <span class="m-auto text-2xl font-thin">+</span>
+            </button>
+        </div>
+    </div>
+
+    <div class="custom-number-input w-32 text-center border border-gray-800 rounded">
+        <label class="w-full text-yellow-400 text-xl font-semibold m-auto" for="15kg">15 kg
+        </label>
+        <div class="flex flex-row h-10 w-full rounded-lg relative bg-transparent mt-1">
+            <button data-action="decrement"
+                    class=" bg-gray-800 text-gray-100 hover:text-gray-200 hover:bg-gray-900 h-full w-20 rounded-l cursor-pointer outline-none">
+                <span class="m-auto text-2xl font-thin">−</span>
+            </button>
+            <input id="15kg" type="number"
+                   class="outline-none focus:outline-none text-center w-full bg-gray-800 font-semibold text-md hover:text-white focus:text-white md:text-basecursor-default flex items-center text-gray-300  outline-none"
+                   name="custom-input-number" value="0" min="0" max="999"  oninput="this.value = Math.trunc(Math.min(Math.max(this.value, 0), 999)); localStorage.setItem(this.id, this.value)"></input>
+            <button data-action="increment"
+                    class="bg-gray-800 text-gray-100 hover:text-gray-200 hover:bg-gray-900 h-full w-20 rounded-r cursor-pointer">
+                <span class="m-auto text-2xl font-thin">+</span>
+            </button>
+        </div>
+    </div>
+
+    <div class="custom-number-input w-32 text-center border border-gray-800 rounded">
+        <label class="w-full text-green-400 text-xl font-semibold m-auto" for="10kg">10 kg
+        </label>
+        <div class="flex flex-row h-10 w-full rounded-lg relative bg-transparent mt-1">
+            <button data-action="decrement"
+                    class=" bg-gray-800 text-gray-100 hover:text-gray-200 hover:bg-gray-900 h-full w-20 rounded-l cursor-pointer outline-none">
+                <span class="m-auto text-2xl font-thin">−</span>
+            </button>
+            <input id="10kg" type="number"
+                   class="outline-none focus:outline-none text-center w-full bg-gray-800 font-semibold text-md hover:text-white focus:text-white md:text-basecursor-default flex items-center text-gray-300  outline-none"
+                   name="custom-input-number" value="0" min="0" max="999" oninput="this.value = Math.trunc(Math.min(Math.max(this.value, 0), 999)); localStorage.setItem(this.id, this.value)"></input>
+            <button data-action="increment"
+                    class="bg-gray-800 text-gray-100 hover:text-gray-200 hover:bg-gray-900 h-full w-20 rounded-r cursor-pointer">
+                <span class="m-auto text-2xl font-thin">+</span>
+            </button>
+        </div>
+    </div>
+
+    <div class="custom-number-input w-32 text-center border border-gray-800 rounded">
+        <label class="w-full text-gray-100 text-xl font-semibold m-auto" for="5kg">5 kg
+        </label>
+        <div class="flex flex-row h-10 w-full rounded-lg relative bg-transparent mt-1">
+            <button data-action="decrement"
+                    class=" bg-gray-800 text-gray-100 hover:text-gray-200 hover:bg-gray-900 h-full w-20 rounded-l cursor-pointer outline-none">
+                <span class="m-auto text-2xl font-thin">−</span>
+            </button>
+            <input id="5kg" type="number"
+                   class="outline-none focus:outline-none text-center w-full bg-gray-800 font-semibold text-md hover:text-white focus:text-white md:text-basecursor-default flex items-center text-gray-300  outline-none"
+                   name="custom-input-number" value="0" min="0" max="999" oninput="this.value = Math.trunc(Math.min(Math.max(this.value, 0), 999)); localStorage.setItem(this.id, this.value)"></input>
+            <button data-action="increment"
+                    class="bg-gray-800 text-gray-100 hover:text-gray-200 hover:bg-gray-900 h-full w-20 rounded-r cursor-pointer">
+                <span class="m-auto text-2xl font-thin">+</span>
+            </button>
+        </div>
+    </div>
+
+
+    <div class="custom-number-input w-32 text-center border border-gray-800 rounded">
+        <label class="w-full text-gray-600 text-xl font-semibold m-auto" for="2-5kg">2.5 kg
+        </label>
+        <div class="flex flex-row h-10 w-full rounded-lg relative bg-transparent mt-1">
+            <button data-action="decrement"
+                    class="bg-gray-800 text-gray-100 hover:text-gray-200 hover:bg-gray-900 h-full w-20 rounded-l cursor-pointer outline-none">
+                <span class="m-auto text-2xl font-thin">−</span>
+            </button>
+            <input id="2-5kg" type="number"
+                   class="outline-none focus:outline-none text-center w-full bg-gray-800 font-semibold text-md hover:text-white focus:text-white md:text-basecursor-default flex items-center text-gray-300  outline-none"
+                   name="custom-input-number" value="0" min="0" max="999" oninput="this.value = Math.trunc(Math.min(Math.max(this.value, 0), 999)); localStorage.setItem(this.id, this.value)"></input>
+            <button data-action="increment"
+                    class="bg-gray-800 text-gray-100 hover:text-gray-200 hover:bg-gray-900 h-full w-20 rounded-r cursor-pointer">
+                <span class="m-auto text-2xl font-thin">+</span>
+            </button>
+        </div>
+    </div>
+
+    <div class="custom-number-input w-32 text-center border border-gray-800 rounded">
+        <label class="w-full text-gray-300 text-xl font-semibold m-auto" for="1-25kg">1.25 kg
+        </label>
+        <div class="flex flex-row h-10 w-full rounded-lg relative bg-transparent mt-1">
+            <button data-action="decrement"
+                    class=" bg-gray-800 text-gray-100 hover:text-gray-200 hover:bg-gray-900 h-full w-20 rounded-l cursor-pointer outline-none">
+                <span class="m-auto text-2xl font-thin">−</span>
+            </button>
+            <input id="1-25kg" type="number"
+                   class="outline-none focus:outline-none text-center w-full bg-gray-800 font-semibold text-md hover:text-white focus:text-white md:text-basecursor-default flex items-center text-gray-300  outline-none"
+                   name="custom-input-number" value="0" min="0" max="999" oninput="this.value = Math.trunc(Math.min(Math.max(this.value, 0), 999)); localStorage.setItem(this.id, this.value)"></input>
+            <button data-action="increment"
+                    class="bg-gray-800 text-gray-100 hover:text-gray-200 hover:bg-gray-900 h-full w-20 rounded-r cursor-pointer">
+                <span class="m-auto text-2xl font-thin">+</span>
+            </button>
+        </div>
+    </div>
+
+    <div class="custom-number-input w-32 text-center border border-gray-800 rounded">
+        <label class="w-full text-gray-300 text-xl font-semibold m-auto" for="0-5kg">0.5 kg
+        </label>
+        <div class="flex flex-row h-10 w-full rounded-lg relative bg-transparent mt-1">
+            <button data-action="decrement"
+                    class=" bg-gray-800 text-gray-100 hover:text-gray-200 hover:bg-gray-900 h-full w-20 rounded-l cursor-pointer outline-none">
+                <span class="m-auto text-2xl font-thin">−</span>
+            </button>
+            <input id="0-5kg" type="number"
+                   class="outline-none focus:outline-none text-center w-full bg-gray-800 font-semibold text-md hover:text-white focus:text-white md:text-basecursor-default flex items-center text-gray-300  outline-none"
+                   name="custom-input-number" value="0" min="0" max="999" oninput="this.value = Math.trunc(Math.min(Math.max(this.value, 0), 999)); localStorage.setItem(this.id, this.value)">
+            <button data-action="increment"
+                    class="bg-gray-800 text-gray-100 hover:text-gray-200 hover:bg-gray-900 h-full w-20 rounded-r cursor-pointer">
+                <span class="m-auto text-2xl font-thin">+</span>
+            </button>
+        </div>
+    </div>
+
+    <div class="custom-number-input w-32 text-center border border-gray-800 rounded">
+        <label class="w-full text-gray-300 text-xl font-semibold m-auto" for="0-25kg">0.25 kg
+        </label>
+        <div class="flex flex-row h-10 w-full rounded-lg relative bg-transparent mt-1">
+            <button data-action="decrement"
+                    class=" bg-gray-800 text-gray-100 hover:text-gray-200 hover:bg-gray-900 h-full w-20 rounded-l cursor-pointer outline-none">
+                <span class="m-auto text-2xl font-thin">−</span>
+            </button>
+            <input id="0-25kg" type="number"
+                   class="outline-none focus:outline-none text-center w-full bg-gray-800 font-semibold text-md hover:text-white focus:text-white md:text-basecursor-default flex items-center text-gray-300  outline-none"
+                   name="custom-input-number" value="0" min="0" max="999" oninput="this.value = Math.trunc(Math.min(Math.max(this.value, 0), 999)); localStorage.setItem(this.id, this.value)">
+            <button data-action="increment"
+                    class="bg-gray-800 text-gray-100 hover:text-gray-200 hover:bg-gray-900 h-full w-20 rounded-r cursor-pointer">
+                <span class="m-auto text-2xl font-thin">+</span>
+            </button>
+        </div>
+    </div>
+</div>
+<div class="w-fit my-5 m-auto text-center"><label class="text-lg text-gray-300">The target weight  <i class='bx bx-target-lock bx-spin text-red-500 align-middle text-2xl text-semibold' ></i> is <input type="number" value="" placeholder="80" id="target-input" class="bg-gray-800 h-10 w-16 text-center font-semibold text-xl placeholder-gray-700 border-red-500">  kilograms.</label></div>
+<div class="text-center mb-5">
+    <button class="bg-gray-800 hover:bg-gray-900 h-10 px-3 text-white font-semibold rounded text-lg" onclick="solve()">Find Perfect Plates <i class='bx bxs-magic-wand bx-tada align-middle text-yellow-100 text-2xl' ></i></button>
+</div>
+
+<div class="bg-gray-800 py-5 mb-5" id="result">
+    <p class="text-lg text-gray-100 px-5 text-center">Please enter your available plates and your target weight above <i class='bx bx-up-arrow-alt align-middle text-2xl text-semibold'></i> and click <i class='bx bx-pointer align-middle text-xl text-semibold' ></i> "Find Perfect Plates" button to get started.</p>
+<!--    <div class="plate plate-0-25"></div>-->
+<!--    <div class="plate plate-0-5"></div>-->
+<!--    <div class="plate plate-1-25"></div>-->
+<!--    <div class="plate plate-2-5"></div>-->
+<!--    <div class="plate plate-5"></div>-->
+<!--    <div class="plate plate-10"></div>-->
+<!--    <div class="plate plate-15"></div>-->
+<!--    <div class="plate plate-20"></div>-->
+<!--    <div class="plate plate-25"></div>-->
+<!--    <div class="plate plate-20"></div>-->
+<!--    <div class="plate plate-15"></div>-->
+<!--    <div class="plate plate-10"></div>-->
+<!--    <div class="plate plate-5"></div>-->
+<!--    <div class="plate plate-2-5"></div>-->
+<!--    <div class="plate plate-1-25"></div>-->
+<!--    <div class="plate plate-0-5"></div>-->
+<!--    <div class="plate plate-0-25"></div>-->
+</div>
+<hr class="opacity-50">
+
+<h2 class="text-2xl font-semibold text-center m-5 text-white">How it works?</h2>
+<div class="text-gray-300 mb-5">
+    The system is purpose-built for the selection of calibrated plates in the context of Streetlifting, offering a solution to the intricate task of plate selection with precision and efficiency. The process involves several key steps:
+    <ul class="list-decimal">
+        <li><span class="font-semibold">Plate Selection as a Mathematical Problem:</span> We view the challenge of choosing plates as a mathematical problem. This mathematical formulation closely resembles the classical knapsack problem, a well-studied optimization problem in computer science.</li>
+        <li><span class="font-semibold">Conversion to Linear Constraint Problem:</span> The mathematical representation of the plate selection problem is then transformed into a linear constraint problem. By doing so, we express the problem using linear equations and inequalities, which are amenable to optimization techniques commonly used in mathematical modeling.</li>
+        <li><span class="font-semibold">Solver Utilization:</span> To find the best solution, we employ the HiGHS mixed integer solver. This powerful tool is adept at handling problems with both integer and continuous variables. It allows us to explore various combinations of plates systematically and efficiently.</li>
+        <li><span class="font-semibold">Dual Objective Criteria:</span> We aim to minimize the number of plates selected and strive to minimize the difference between the total weight of plates on the left and the total weight of plates on the right, promoting symmetry and equilibrium.</li>
+        <li><span class="font-semibold">Pyramidal Weight Arrangement:</span> Once the optimal plate selection has been determined, our system arranges the plates in a pyramidal weight distribution. In this arrangement, the heaviest plates are positioned at the center, gradually tapering off towards the edges to ensure stability or meeting aesthetic preferences.</li>
+    </ul>
+
+</div>
+<p></p>
+
+</body>
+<script>
+    function decrement(e) {
+        const btn = e.target.parentNode.parentElement.querySelector(
+            'button[data-action="decrement"]'
+        );
+        const target = btn.nextElementSibling;
+        let value = Number(target.value);
+        value--;
+
+        target.value = Math.max(value, 0);
+        localStorage.setItem(target.id, target.value);
+    }
+
+    function increment(e) {
+        const btn = e.target.parentNode.parentElement.querySelector(
+            'button[data-action="decrement"]'
+        );
+        const target = btn.nextElementSibling;
+        let value = Number(target.value);
+        value++;
+        target.value = Math.min(value, 999);
+        localStorage.setItem(target.id, target.value);
+    }
+
+    const decrementButtons = document.querySelectorAll(
+        `button[data-action="decrement"]`
+    );
+
+    const incrementButtons = document.querySelectorAll(
+        `button[data-action="increment"]`
+    );
+
+    decrementButtons.forEach(btn => {
+        btn.addEventListener("click", decrement);
+    });
+
+    incrementButtons.forEach(btn => {
+        btn.addEventListener("click", increment);
+    });
+
+    window.onload = () => {
+        let keys = Object.keys(localStorage);
+        for(let key of keys) {
+            document.getElementById(key).value = localStorage.getItem(key);
+        }
+    };
+
+    const result = document.getElementById("result");
+    const target = document.getElementById("target-input");
+
+    function solve() {
+        const targetValue = target.value;
+
+        if (!isNaN(targetValue) && targetValue > 0 && targetValue % 0.25 === 0) {
+            target.classList.remove("border")
+            const weights = ["25kg", "20kg", "15kg", "10kg", "5kg", "2-5kg", "1-25kg", "0-5kg", "0-25kg"].reduce((data, id) => {if (document.getElementById(id).value > 0) data[parseFloat(id.replace("kg", "").replace("-", "."))] = parseInt(document.getElementById(id).value); return data;}, {})
+            result.replaceChildren();
+            result.innerHTML = "<div class=\"lds-ellipsis\">\n" +
+                "            <div></div>\n" +
+                "            <div></div>\n" +
+                "            <div></div>\n" +
+                "            <div></div>\n" +
+                "        </div>"
+
+            worker.postMessage([buildProblem(weights, targetValue), weights]);
+        } else {
+            target.classList.add("border")
+            target.scrollIntoView();
+        }
+    }
+</script>
+</html>
