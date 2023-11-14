@@ -7,6 +7,8 @@
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <title>Streetlifting Weight Plate Calculator</title>
     <script src="script.js"></script>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <link rel="prefetch" href="highs.js">
     <link rel="prefetch" href="highs.wasm">
     <link rel="prefetch" href="worker.js">
@@ -184,6 +186,40 @@
                 transform: translate(24px, 0);
             }
         }
+
+        a {
+            text-decoration: none; /* Remove underlines */
+            color: #3498db!important; /* Set the default text color */
+            transition: color 0.3s ease; /* Add a smooth color transition on hover */
+        }
+
+        /* Change color on hover to give visual feedback */
+        a:hover {
+            color: #2980b9; /* Change color on hover */
+        }
+
+        /* Optionally add an underline on hover to provide additional visual feedback */
+        a:hover {
+            text-decoration: underline; /* Add underline on hover */
+        }
+
+        /* Style visited links */
+        a:visited {
+            color: #8e44ad; /* Set a different color for visited links */
+        }
+
+        /* Remove default styling for links within buttons (if needed) */
+        button a {
+            text-decoration: none;
+            color: inherit; /* Inherit the color from the parent element */
+        }
+
+        /* Add styles for active/focused states for accessibility */
+        a:focus,
+        a:active {
+            outline: none; /* Remove the default focus outline */
+            /* Add additional styling as needed for focus and active states */
+        }
     </style>
 </head>
 <body class="w-11/12 md:w-4/5  m-auto bg-black">
@@ -191,7 +227,7 @@
     Streetlifting Weight Plate Calculator
 </h1>
 <p class="text-center text-gray-300">
-    Are you tired of struggling to figure out the perfect combination of weight plates to load onto your barbell or belt for your Streetlifting workouts?
+    Are you tired of struggling to figure out the perfect combination of weight plates to load onto your belt for your Streetlifting workouts?
     The Streetlifting Weight Plate Calculator is a tool takes the guesswork out of the equation and ensures you have the optimal plates for your desired target weight.
 </p>
 
@@ -207,7 +243,7 @@
         <p class="text-center text-gray-200 text-sm">Our calculator not only selects the most appropriate weight plates but also ensures their precise placement to maintain an optimal center of gravity.</p>
     </div>
     <div class="bg-gray-900 p-2 mx-6 my-2">
-        <h3 class="text-lg font-semibold text-center m-2 text-white"><i class='bx bx-collapse' ></i> Optimal Plate Usage</h3>
+        <h3 class="text-lg font-semibold text-center m-2 text-white"><i class='bx bx-collapse' ></i> Minimal Plate Usage</h3>
         <p class="text-center text-gray-200 text-sm">The calculator is designed to minimize the number of plates required, thus preventing superfluous weight on your belt.</p>
     </div>
 
@@ -411,13 +447,21 @@
 <div class="text-gray-300 mb-5">
     The system is purpose-built for the selection of calibrated plates in the context of Streetlifting, offering a solution to the intricate task of plate selection with precision and efficiency. The process involves several key steps:
     <ul class="list-decimal">
-        <li><span class="font-semibold">Plate Selection as a Mathematical Problem:</span> We view the challenge of choosing plates as a mathematical problem. This mathematical formulation closely resembles the classical knapsack problem, a well-studied optimization problem in computer science.</li>
-        <li><span class="font-semibold">Conversion to Linear Constraint Problem:</span> The mathematical representation of the plate selection problem is then transformed into a linear constraint problem. By doing so, we express the problem using linear equations and inequalities, which are amenable to optimization techniques commonly used in mathematical modeling.</li>
+        <li><span class="font-semibold">Plate Selection as a Mathematical Problem:</span> We view the challenge of choosing plates as a mathematical problem. This mathematical formulation closely resembles the classical knapsack problem, a well-studied combinatorial problem in computer science.</li>
+        <li><span class="font-semibold">Conversion to Linear Constraint Problem:</span> The mathematical representation of the plate selection problem is then transformed into a linear constraint problem. By doing so, we express the problem using linear equations and inequalities, which are amenable to optimization techniques commonly used in mathematical modeling. Sketch of the mathematical modeling:</li>
+        <div>
+            $$\underbrace{\sum_i c_1(W_i) \cdot (L_i + C_i + R_i)}_{\text{Minimal plate usage & symmetry}} + \underbrace{c_2 \cdot (\sum_i W_iL_i - \sum_i W_iR_i),}_{\text{Optimal center of gravity}}$$
+            with \(W_i\) the weight of the plate of type \(i\), \(L_i\), \(C_i\) and \(R_i\) the number of plates of type \(i\) selected to go on left, center and right respectively, \(c_1\) a function that returns a constant based on the weight of the plate \(i\) and \(c_2\) another constant.
+        </div>
         <li><span class="font-semibold">Solver Utilization:</span> To find the best solution, we employ the HiGHS mixed integer solver. This powerful tool is adept at handling problems with both integer and continuous variables. It allows us to explore various combinations of plates systematically and efficiently.</li>
         <li><span class="font-semibold">Dual Objective Criteria:</span> We aim to minimize the number of plates selected and strive to minimize the difference between the total weight of plates on the left and the total weight of plates on the right, promoting symmetry and equilibrium.</li>
         <li><span class="font-semibold">Pyramidal Weight Arrangement:</span> Once the optimal plate selection has been determined, our system arranges the plates in a pyramidal weight distribution. In this arrangement, the heaviest plates are positioned at the center, gradually tapering off towards the edges to ensure stability or meeting aesthetic preferences.</li>
     </ul>
 
+</div>
+<hr class="opacity-50">
+<div class="text-gray-300 m-5 text-center text-lg">
+    Our tool is evolving, and we welcome your suggestions to make it even better! Connect with us on Instagram: <a href="https://www.instagram.com/riiswa/" target="_blank">@riiswa</a>, drop us an email at <a href="mailto:sl@warisradji.com" target="_blank">sl@warisradji.com</a>, or for the tech-savvy, check out the code on <a href="https://github.com/riiswa/streetlifting-weight-plate-calculator" target="_blank">GitHub</a>.
 </div>
 <p></p>
 
@@ -471,6 +515,14 @@
 
     const result = document.getElementById("result");
     const target = document.getElementById("target-input");
+
+    document.getElementById("target-input")
+        .addEventListener("keyup", function(event) {
+            event.preventDefault();
+            if (event.keyCode === 13) {
+                solve()
+            }
+        });
 
     function solve() {
         const targetValue = target.value;
