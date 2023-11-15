@@ -6,32 +6,49 @@ function w(x) {
     } else if (x <= 2.5) {
         return 0.51
     } else {
-        return 1;
+        return 0.9;
     }
 }
 
 function buildProblem(weights, target) {
-    return [
+    const cs = Object.entries(weights).flatMap(([k, v], i) => parseFloat(k) < 20 ? [`c${i}`] : []).join(" + " )
+    const M = 1000
+    const bigPlates = Object.entries(weights).flatMap(([k, v], i) => parseFloat(k) >= 20 ? [`${1/M} l${i}`, `${1/M} r${i}`] : []).join(" - " )
+
+    const pb = [
         "Minimize",
         "\t" + Object.entries(weights).map(([k, v], i) =>`${w(parseFloat(k))} l${i} + ${w(parseFloat(k))} c${i} + ${w(parseFloat(k))} r${i}`).join(" + ") +
-        "+ " + Object.entries(weights).map(([k, v], i) =>`${0.25 * parseFloat(k)} l'${i}`).join(" + ") + " - " + Object.entries(weights).map(([k, v], i) =>`${0.25 * parseFloat(k)} r'${i}`).join(" - "),
+        " + " + Object.entries(weights).map(([k, v], i) =>`${0.25 * parseFloat(k)} l'${i}`).join(" + ") + " - " + Object.entries(weights).map(([k, v], i) =>`${0.25 * parseFloat(k)} r'${i}`).join(" - "),
+        " + " + Object.entries(weights).map(([k, v], i) =>`${parseFloat(k) <= 5 ? 0.15 : 0.25} l''${i}`).join(" + ") + " - " + Object.entries(weights).map(([k, v], i) =>`${parseFloat(k) <= 5 ? 0.15 : 0.25} r''${i}`).join(" - "),
         "Subject To",
         Object.entries(weights).map(([k, v], i) => `\tl${i} + c${i} + r${i} <= ${v}`).join("\n"),
         "\t" + Object.entries(weights).map(([k, v], i) => `${k} l${i} + ${k} c${i} + ${k} r${i}`).join(" + ") + ` = ${target}`,
         "\t" + Object.entries(weights).map(([k, v], i) => `c${i}`).join(" + ") + " <= 1",
-        Object.entries(weights).flatMap(([k, v], i) => target >= 20 && parseInt(k) < 20 ? [`\tc${i} = 0`] : []).join("\n"),
+        //Object.entries(weights).flatMap(([k, v], i) => parseFloat(k) >= 20 && cs !== "" ? [`\tl${i} - ${cs} <= r2`, `\tr${i} + ${cs} - r'${i} >= 0`] : []).join("\n"),
         "\t" + Object.entries(weights).map(([k, v], i) => `${k} l${i}`).join(" + ") + " - " + Object.entries(weights).map(([k, v], i) => `${k} r${i}`).join(" - ") + " >= 0",
-
+        "\t" + Object.entries(weights).map(([k, v], i) => `l''${i}`).join(" + ") + " - " + Object.entries(weights).map(([k, v], i) => `r''${i}`).join(" - ") + " >= 0",
+        "\t b'' - b' = 0",
+        bigPlates !== "" ? `\tb'' - ${bigPlates} >= 0`: "",
+        bigPlates !== "" ? `\tb'' - ${bigPlates} - 1 - b' <= 0`: "",
+        cs !== "" ? `\t b' + ${cs} <= 1`: "",
+        target > 20 ? Object.entries(weights).flatMap(([k, v], i) => parseFloat(k) < 10 ? [`\tc${i} = 0`]: []).join("\n") : "",
         Object.entries(weights).map(([k, v], i) => `\tl${i} - l'${i} = 0`).join("\n"),
         Object.entries(weights).map(([k, v], i) => `\tr${i} - r'${i} = 0`).join("\n"),
+
+        Object.entries(weights).map(([k, v], i) => `\tl${i} - l''${i} = 0`).join("\n"),
+        Object.entries(weights).map(([k, v], i) => `\tr${i} - r''${i} = 0`).join("\n"),
         "Bounds",
         Object.entries(weights).map(([k, v], i) => `\t0 <= l${i}`).join("\n"),
         Object.entries(weights).map(([k, v], i) => `\t0 <= c${i}`).join("\n"),
         Object.entries(weights).map(([k, v], i) => `\t0 <= r${i}`).join("\n"),
         "General",
-        "\t" + Object.entries(weights).map(([k, v], i) => `l${i} l'${i} c${i} r${i} r'${i}`).join(" "),
+        "\t" + Object.entries(weights).map(([k, v], i) => `l${i} l'${i} l''${i} c${i} r${i} r'${i} r''${i}`).join(" "),
+        "Binary",
+        "\tb' b''",
         "End"
-    ].join("\n")
+    ]
+
+    return pb.join("\n");
 }
 
 const plates2div = {
