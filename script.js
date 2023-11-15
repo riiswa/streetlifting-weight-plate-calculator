@@ -18,7 +18,7 @@ function buildProblem(weights, target) {
     const pb = [
         "Minimize",
         "\t" + Object.entries(weights).map(([k, v], i) =>`${w(parseFloat(k))} l${i} + ${w(parseFloat(k))} c${i} + ${w(parseFloat(k))} r${i}`).join(" + ") +
-        " + " + Object.entries(weights).map(([k, v], i) =>`${0.25 * parseFloat(k)} l'${i}`).join(" + ") + " - " + Object.entries(weights).map(([k, v], i) =>`${0.25 * parseFloat(k)} r'${i}`).join(" - "),
+        " + " + Object.entries(weights).map(([k, v], i) =>`${parseFloat(k)} l'${i}`).join(" + ") + " - " + Object.entries(weights).map(([k, v], i) =>`${parseFloat(k)} r'${i}`).join(" - "),
         //" + " + Object.entries(weights).map(([k, v], i) =>`${parseFloat(k) <= 5 ? 0.15 : 0.25} l''${i}`).join(" + ") + " - " + Object.entries(weights).map(([k, v], i) =>`${parseFloat(k) <= 5 ? 0.15 : 0.25} r''${i}`).join(" - "),
         "Subject To",
         Object.entries(weights).map(([k, v], i) => `\tl${i} + c${i} + r${i} <= ${v}`).join("\n"),
