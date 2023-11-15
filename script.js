@@ -19,7 +19,7 @@ function buildProblem(weights, target) {
         "Minimize",
         "\t" + Object.entries(weights).map(([k, v], i) =>`${w(parseFloat(k))} l${i} + ${w(parseFloat(k))} c${i} + ${w(parseFloat(k))} r${i}`).join(" + ") +
         " + " + Object.entries(weights).map(([k, v], i) =>`${parseFloat(k)} l'${i}`).join(" + ") + " - " + Object.entries(weights).map(([k, v], i) =>`${parseFloat(k)} r'${i}`).join(" - "),
-        " + " + Object.entries(weights).map(([k, v], i) =>`0.25 l''${i} - r''${i}`).join(" + "),// + " - " + Object.entries(weights).map(([k, v], i) =>`0.25 r''${i}`).join(" - "),
+        " + " + Object.entries(weights).map(([k, v], i) =>`0.25 l''${i} - 0.25 r''${i}`).join(" + "),// + " - " + Object.entries(weights).map(([k, v], i) =>`0.25 r''${i}`).join(" - "),
         "Subject To",
         Object.entries(weights).map(([k, v], i) => `\tl${i} + c${i} + r${i} <= ${v}`).join("\n"),
         "\t" + Object.entries(weights).map(([k, v], i) => `${k} l${i} + ${k} c${i} + ${k} r${i}`).join(" + ") + ` = ${target}`,
